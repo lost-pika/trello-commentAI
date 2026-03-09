@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://p.trellocdn.com/power-up.min.js"></script>
+</head>
+<body>
+
+<script>
+const t = window.TrelloPowerUp.iframe();
+
+t.authorize(function(secret){
+  const returnUrl = t.signUrl('./auth-success.html');
+
+  return `https://trello.com/1/authorize?expiration=never&name=Comment%20AI&scope=read,write&response_type=token&key=YOUR_TRELLO_API_KEY&return_url=${encodeURIComponent(returnUrl)}`;
+});
+</script>
+
+</body>
+</html>
