@@ -1,57 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="https://p.trellocdn.com/power-up.min.js"></script>
+</head>
+
+<body>
+<script>
 const ICON = 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png';
 
 window.TrelloPowerUp.initialize({
 
-/* CARD BUTTON (Toggle) */
-'card-buttons': function(t, options) {
-
-  return t.get('card', 'shared', 'commentAIVisible', false)
-    .then(function(isVisible){
-
-      return [{
-        icon: ICON,
-        text: isVisible ? 'Remove Comment AI' : 'Add Comment AI',
-
-        callback: function(t){
-
-          return t.set('card', 'shared', 'commentAIVisible', !isVisible)
-            .then(function(){
-              return t.reload(); // refresh card UI
-            });
-
-        }
-      }];
-
-    });
-
+/* BOARD BUTTON → API KEY SETTINGS */
+'board-buttons': function(t) {
+  return [{
+    icon: ICON,
+    text: 'Comment AI',
+    callback: function(t) {
+      return t.popup({
+        title: 'Comment AI Settings',
+        url: './settings.html',
+        height: 250
+      });
+    }
+  }];
 },
 
-/* CARD SECTION */
-'card-back-section': function(t, options){
+/* CARD BUTTON → ADD / REMOVE COMMENT AI */
+'card-buttons': function(t) {
 
-  return t.get('card','shared','commentAIVisible',false)
-    .then(function(isVisible){
+  return t.get('card','shared','commentAIEnabled',false)
+  .then(function(enabled){
 
-      if(!isVisible){
-        return null; // hide section
+    return [{
+      icon: ICON,
+      text: enabled ? 'Remove Comment AI' : 'Add Comment AI',
+
+      callback: function(t){
+
+        return t.set('card','shared','commentAIEnabled', !enabled)
+        .then(function(){
+          return t.reload(); // refresh card UI
+        });
+
       }
+    }];
 
-      return {
-        title: 'Comment AI',
-        icon: ICON,
-        content: {
-          type: 'iframe',
-          url: t.signUrl('./section.html'),
-          height: 400
-        }
-      };
-
-    });
+  });
 
 },
 
-/* SETTINGS (only for board menu) */
-'show-settings': function(t, options) {
+/* CARD BACK SECTION → COMMENT AI UI */
+'card-back-section': function(t){
+
+  return t.get('card','shared','commentAIEnabled',false)
+  .then(function(enabled){
+
+    if(!enabled){
+      return null;
+    }
+
+    return {
+      title: 'Comment AI',
+      icon: ICON,
+      content: {
+        type: 'iframe',
+        url: t.signUrl('./section.html'),
+        height: 400
+      }
+    };
+
+  });
+
+},
+
+/* SETTINGS (Board Menu → PowerUps → Settings) */
+'show-settings': function(t) {
   return t.popup({
     title: 'Comment AI Settings',
     url: './settings.html',
@@ -60,3 +84,7 @@ window.TrelloPowerUp.initialize({
 }
 
 });
+</script>
+
+</body>
+</html>
